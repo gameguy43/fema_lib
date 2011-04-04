@@ -27,16 +27,19 @@ from html5lib import HTMLParser, treebuilders
 import traceback
 import json
 import yaml
+import types
+import string
 
 def init_dict():
     metadict = {
-        'id': '',
+        'id': 0,
         'location': '',
         'photographer': '',
         'photo_date': '',
         'original_filename': '',
         'size': '',
         'dimensions': '',
+        'disasters': None,
         'categories':  None,
         'url_to_lores_img':  '',
         'url_to_hires_img':  '',
@@ -92,6 +95,9 @@ def parse_img(html):
     data_table = soup.find("", {"class": "photoinfo2"}).find("tbody")
 
     metadict['url_to_hires_img'] = find_by_tag_and_contents(data_table, "a", u"\u00BB Download original photo")['href']
+    # TODO: for now, we just assume that the thumb image url follows a pattern
+    # maybe we should really do a search for this image's id and scrape the thumb url off of the page. meh.
+    metadict['url_to_thumb_img'] = string.replace(metadict['url_to_hires_img'], "original", "thumbnail")
     
     for data_label_cell in data_table.findAll("th"):
         try:
@@ -105,7 +111,7 @@ def parse_img(html):
         elif label == u'Photo Date:':
             metadict['photo_date'] = data_label_cell.findNextSibling("td").contents[0].strip()
         elif label == u'ID:':
-            metadict['id'] = data_label_cell.findNextSibling("td").contents[0].strip()
+            metadict['id'] = int(data_label_cell.findNextSibling("td").contents[0].strip())
         elif label == u'Original filename:':
             metadict['original_filename'] = data_label_cell.findNextSibling("td").contents[0].strip()
         elif label == u'Size:':
@@ -114,11 +120,19 @@ def parse_img(html):
             metadict['dimensions'] = data_label_cell.findNextSibling("td").contents[0].strip()
         elif label == u'Categories:':
             categories_td = data_label_cell.findNextSibling("td")
-            #TODO
+            categories_list = filter(lambda x: isinstance(x,unicode), categories_td.contents)
+            categories_list = map(lambda x: x.strip(), categories_list)
+            categories_list = filter(lambda x: len(x) > 0, categories_list)
+            metadict['categories'] = categories_list
+        elif label == u'Disasters:':
+            disasters_td = data_label_cell.findNextSibling("td")
+            disaster_links = disasters_td.findAll("a")
+            disaster_tuples = map(lambda link: (link.contents[0],link['href']), disaster_links)
+            metadict['disasters'] = disaster_tuples
     return metadict
     
 def test_parse():
-    f = open('./samples/46326.html')
+    f = open('./samples/20000.html')
     raw_html = f.read()
     import pprint
     pprint.pprint(parse_img(raw_html))
