@@ -29,6 +29,7 @@ import json
 import yaml
 import types
 import string
+import scraper
 
 def init_dict():
     metadict = {
@@ -47,6 +48,9 @@ def init_dict():
     }
     return metadict
 
+def post_processing(data_dict, page_permalink=None):
+    data_dict['page_permalink'] = scraper.id_to_page_permalink(data_dict['id'])
+    return data_dict
 
 def get_first_result_index_from_quick_search_results(html):
     parser = HTMLParser(tree=treebuilders.getTreeBuilder("beautifulsoup"))
@@ -81,11 +85,17 @@ def find_by_tag_and_contents(soup, tag, contents):
             return obj
     return None
 
-def parse_img(html):
+def parse_img_html_page(html):
+    if not html or html == '':
+        print "wait, something terrible has happened. abort mission!"
+        return None
     metadict = init_dict()
     # soupify the html
     parser = HTMLParser(tree=treebuilders.getTreeBuilder("beautifulsoup"))
     soup = parser.parse(html)
+    if not soup:
+        print "wait, we couldn't make a soup. i don't know WHY..."
+        return None
     # the lores image url
     metadict['url_to_lores_img'] = soup.find("",{"class": "tophoto"}).find("img")["src"]
     # the description/caption
