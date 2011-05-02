@@ -21,12 +21,6 @@
 </div> 
  
 <div id="not_desc"> 
-{% if image.source %}
-<h4>Source</h4>
-<div>
-    {{image.source}}
-</div>
-{% endif %}
  
 <h6>Downloads:</h6> 
 <div class="block_datapt"> 
@@ -48,10 +42,19 @@
 </div>
 {% endif %}
 
-{% if image.links%}
-<h6>Related Links:</h6>
+{% if image.location %}
+<h6>Location</h6>
 <div class="block_datapt">
-{{image.links|safe}}
+<p>
+{{image.location}}
+</p>
+</div>
+{% endif %}
+
+{% if image.disasters%}
+<h6>Disasters:</h6>
+<div class="block_datapt">
+{{image.disasters|safe}}
 </div>
 {% endif %}
 
@@ -61,24 +64,39 @@
     {{image.id}}
 </p>
 
-{% if image.creation%}
+
+{% if image.dimensions%}
 <p class="datapoint">
-    <strong class="label">Creation Date:</strong>
-    {{image.creation}}
+    <strong class="label">Dimensions:</strong>
+    {{image.dimensions}}
 </p>
 {% endif %}
 
-{% if image.credit %}
+{% if image.size%}
 <p class="datapoint">
-    <strong class="label">Photo Credit:</strong>
-    {{image.credit}}
+    <strong class="label">Size:</strong>
+    {{image.size}}
 </p>
 {% endif %}
 
-{% if image.provider %}
+{% if image.photo_date %}
 <p class="datapoint">
-    <strong class="label">Content Providers(s):</strong>
-    {{image.provider}}
+    <strong class="label">Photo Date:</strong>
+    {{image.photo_date}}
+</p>
+{% endif %}
+
+{% if image.original_filename%}
+<p class="datapoint">
+    <strong class="label">Original Filename:</strong>
+    {{image.original_filename}}
+</p>
+{% endif %}
+
+{% if image.page_permalink%}
+<p class="datapoint">
+    <strong class="label">Original Page Permalink:</strong>
+    <a href="{{image.page_permalink}}">{{image.page_permalink}}</a>
 </p>
 {% endif %}
 
@@ -89,12 +107,6 @@
     {{image.categories|safe}}
 </div>
 {% endif %}
-
-<p class="datapoint">
-<a href=" http://phil.cdc.gov/phil/details.asp?pid={{image.id}}">Original Page at CDC PHIL &raquo;</a>
-
-</p>
- 
  
 </div> 
 								
@@ -109,16 +121,4 @@
  
  
 </div> 
- 
- 
-				<p class="postmetadata alt"> 
-					<small> 
-						You can follow any comments to this entry through the <a href='http://cdc-phil.releaseourdata.com/?feed=rss2&amp;page_id=235'>RSS 2.0</a> feed.
- 
-													You can <a href="#respond">leave a comment</a>, or <a href="http://cdc-phil.releaseourdata.com/wp-trackback.php?p=235" rel="trackback">trackback</a> from your own site.
- 
-						
-					</small> 
-				</p> 
-	
 	</div> 

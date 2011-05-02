@@ -127,24 +127,22 @@ def prep_data_for_insertion(data_dict):
 def re_objectify_data(data_dict):
     if 'disasters' in data_dict:
         data_dict['disasters'] = json.loads(data_dict['disasters'])
-        print data_dict['disasters']
     if 'categories' in data_dict:
         data_dict['categories'] = json.loads(data_dict['categories'])
     return data_dict
 
 
-def links_to_html(json_str):
-    parsed = json.loads(json_str)
+def disasters_to_html(list):
     retval = "<ul>"
-    for string, url in parsed:
+    for string, url in list:
         retval += '<li><a href="' + url + '">' + string + "</a></li>\n";
     retval += "</ul>"
     return retval
 
-def categories_to_html(categories_dict):
+def categories_to_html(list):
     retval = "<ul>"
-    for category in categories_dict:
-        retval += '<li><a href="' + category[1] + '">' + category[0] + '</a></li>\n'
+    for category in list:
+        retval += '<li>' + category + '</li>\n'
     retval += "</ul>"
     return retval
 
@@ -166,10 +164,9 @@ def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
     # add link rel=license
     #image_as_dict['copyright'] = image_as_dict['copyright'].strip("'").replace('None', '<a href="http://creativecommons.org/licenses/publicdomain/" rel="license">None</a>')
 
-    '''
-    if image_as_dict['links']:
-        image_as_dict['links'] = links_to_html(image_as_dict['links'])
-    '''
+    
+    if image_as_dict['disasters']:
+        image_as_dict['disasters'] = disasters_to_html(image_as_dict['disasters'])
     if image_as_dict['categories']:
         image_as_dict['categories'] = categories_to_html(image_as_dict['categories'])
 
